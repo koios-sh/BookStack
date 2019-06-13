@@ -112,6 +112,7 @@ return [
     'books_popular_empty' => 'Najpopularniejsze podręczniki pojawią się w tym miejscu.',
     'books_new_empty' => 'Tutaj pojawią się ostatnio utworzone podręczniki.',
     'books_create' => 'Utwórz podręcznik',
+    'books_import' => 'Importuj książkę',
     'books_delete' => 'Usuń podręcznik',
     'books_delete_named' => 'Usuń podręcznik :bookName',
     'books_delete_explain' => 'To spowoduje usunięcie podręcznika \':bookName\', Wszystkie strony i rozdziały zostaną usunięte.',

@@ -33,11 +33,13 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::get('/create-book', 'BookController@create');
+    Route::get('/import-book', 'BookController@import');
     Route::group(['prefix' => 'books'], function () {
 
         // Books
         Route::get('/', 'BookController@index');
         Route::post('/', 'BookController@store');
+        Route::post('/import', 'BookController@storeImport');
         Route::get('/{slug}/edit', 'BookController@edit');
         Route::put('/{slug}', 'BookController@update');
         Route::delete('/{id}', 'BookController@destroy');
