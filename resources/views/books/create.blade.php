@@ -1,16 +1,5 @@
 @extends('simple-layout')
 
-@section('toolbar')
-    <div class="col-sm-8 faded">
-        <div class="breadcrumbs">
-            <a href="{{ baseUrl('/books') }}" class="text-button">@icon('book'){{ trans('entities.books') }}</a>
-            <span class="sep">&raquo;</span>
-            <a href="{{ baseUrl('/create-book') }}" class="text-button">@icon('add'){{ trans('entities.books_create') }}</a>
-            <a href="{{ baseUrl('/import-book') }}" class="text-button">@icon('add'){{ trans('entities.books_import') }}</a>
-        </div>
-    </div>
-@stop
-
 @section('body')
     <div class="container small">
         <div class="my-s">
@@ -31,6 +20,10 @@
                     '/create-book' => [
                         'text' => trans('entities.books_create'),
                         'icon' => 'add'
+                    ],
+                    '/import-book' => [
+                        'text' => trans('entities.books_import'),
+                        'icon' => 'add'
                     ]
                 ]])
             @endif
@@ -44,6 +37,4 @@
         </div>
     </div>
 </div>
-<p class="margin-top large"><br></p>
-    @include('components.image-manager', ['imageType' => 'cover'])
 @stop
