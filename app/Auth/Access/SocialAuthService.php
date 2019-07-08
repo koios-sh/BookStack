@@ -15,7 +15,7 @@ class SocialAuthService
     protected $socialite;
     protected $socialAccount;
 
-    protected $validSocialDrivers = ['google', 'github', 'facebook', 'slack', 'twitter', 'azure', 'okta', 'gitlab', 'twitch', 'discord'];
+    protected $validSocialDrivers = ['google', 'github', 'facebook', 'slack', 'twitter', 'azure', 'okta', 'gitlab', 'twitch', 'discord', 'wework'];
 
     /**
      * SocialAuthService constructor.
@@ -89,6 +89,14 @@ class SocialAuthService
         return $this->socialite->driver($driver)->user();
     }
 
+    public function debug_to_console( $data ) {
+        $output = $data;
+        if ( is_array( $output ) )
+            $output = implode( ',', $output);
+
+        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+    }
+
     /**
      * Handle the login process on a oAuth callback.
      * @param $socialDriver
@@ -104,6 +112,10 @@ class SocialAuthService
         $socialAccount = $this->socialAccount->where('driver_id', '=', $socialId)->first();
         $isLoggedIn = auth()->check();
         $currentUser = user();
+        
+        $this->debug_to_console($socialId);
+        $this->debug_to_console($socialAccount);
+        $this->debug_to_console($currentUser);
 
         // When a user is not logged in and a matching SocialAccount exists,
         // Simply log the user into the application.
@@ -138,7 +150,7 @@ class SocialAuthService
         if (setting('registration-enabled')) {
             $message .= trans('errors.social_account_register_instructions', ['socialAccount' => title_case($socialDriver)]);
         }
-        
+
         throw new SocialSignInAccountNotUsed($message, '/login');
     }
 

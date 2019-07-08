@@ -28,7 +28,8 @@
         "socialiteproviders/gitlab": "^3.0",
         "socialiteproviders/twitch": "^3.0",
         "socialiteproviders/discord": "^2.0",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "socialiteproviders/wework": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -90,10 +91,14 @@
             "php": "7.0.5"
         }
     },
-    "repositories": {
-        "packagist": {
+    "repositories": [
+        {
             "type": "composer",
-            "url": "https://packagist.phpcomposer.com"
+            "url": "https://mirrors.aliyun.com/composer/"
+        },
+        {
+            "url": "https://github.com/koios-sh/Wework.git",
+            "type": "git"
         }
-    }
+    ]
 }
