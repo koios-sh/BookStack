@@ -23,3 +23,5 @@ nbproject
 .settings/
 webpack-stats.json
 .DS_Store
+/public/libs.zip
+/public/dist.zip
