@@ -108,14 +108,12 @@ class SocialAuthService
     {
         $socialId = $socialUser->getId();
 
+        $user = $this->userRepo->getByEmail($socialUser->getEmail());
+
         // Get any attached social accounts or users
         $socialAccount = $this->socialAccount->where('driver_id', '=', $socialId)->first();
         $isLoggedIn = auth()->check();
         $currentUser = user();
-        
-        $this->debug_to_console($socialId);
-        $this->debug_to_console($socialAccount);
-        $this->debug_to_console($currentUser);
 
         // When a user is not logged in and a matching SocialAccount exists,
         // Simply log the user into the application.
@@ -126,7 +124,11 @@ class SocialAuthService
 
         // When a user is logged in but the social account does not exist,
         // Create the social account and attach it to the user & redirect to the profile page.
-        if ($isLoggedIn && $socialAccount === null) {
+        if (($isLoggedIn || $user !== null) && $socialAccount === null) {
+            if ($isLoggedIn === false) {
+                $currentUser = $user;
+                auth()->login($user);
+            }
             $this->fillSocialAccount($socialDriver, $socialUser);
             $currentUser->socialAccounts()->save($this->socialAccount);
             session()->flash('success', trans('settings.users_social_connected', ['socialAccount' => title_case($socialDriver)]));
