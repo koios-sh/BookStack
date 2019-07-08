@@ -52,7 +52,7 @@ class Authenticate
         // $this->debug_to_console(substr($uri, 0, 7));
 
         // 如果访问 /books/${book} 或者 /search，则忽略是否公开访问开关
-        if (!((substr($uri, 0, 7) == '/books/' && strlen($uri) > 7) || substr($uri, 0, 8) == '/search/') && !hasAppAccess()) {
+        if (!((substr($uri, 0, 7) == '/books/' && strlen($uri) > 7) || substr($uri, 0, 8) == '/search/' || substr($uri, 0, 16) == '/uploads/images/') && !hasAppAccess()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
