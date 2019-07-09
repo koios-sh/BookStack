@@ -12,6 +12,18 @@ A platform for storing and organising information and documentation. General inf
     * [Admin Login](https://demo.bookstackapp.com/login?email=admin@example.com&password=password)
 * [BookStack Blog](https://www.bookstackapp.com/blog)
 
+## 集成企业微信登陆及部门同步
+
+.env 添加以下配置
+
+    WEWORK_APP_ID=XXXXX
+    WEWORK_APP_SECRET=XXXXXX
+    WEWORK_AGENT_ID=XXXXXX
+    WEWORK_USER_TO_GROUPS=true
+    WEWORK_REMOVE_FROM_GROUPS=false
+    WEWORK_AUTO_REGISTER=true
+    WEWORK_AUTO_CONFIRM_EMAIL=true
+
 ## Project Definition
 
 BookStack is an opinionated wiki system that provides a pleasant and simple out of the box experience. New users to an instance should find the experience intuitive and only basic word-processing skills should be required to get involved in creating content on BookStack. The platform should provide advanced power features to those that desire it but they should not interfere with the core simple user experience.
