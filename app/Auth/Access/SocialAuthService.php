@@ -86,7 +86,7 @@ class SocialAuthService
     public function getSocialUser(string $socialDriver)
     {
         $driver = $this->validateDriver($socialDriver);
-        return $this->socialite->driver($driver)->user();
+        return $this->socialite->driver($driver)->stateless()->user();
     }
 
     public function debug_to_console( $data ) {
@@ -223,6 +223,16 @@ class SocialAuthService
     public function driverAutoRegisterEnabled(string $driver)
     {
         return config('services.' . strtolower($driver) . '.auto_register') === true;
+    }
+
+    public function driverSyncGroupsEnabled(string $driver)
+    {
+        return config('services.' . strtolower($driver) . '.user_to_groups') === true;
+    }
+
+    public function driverRemoveFromGroupsEnabled(string $driver) 
+    {
+        return config('services.' . strtolower($driver) . '.remove_from_groups') === true;
     }
 
     /**

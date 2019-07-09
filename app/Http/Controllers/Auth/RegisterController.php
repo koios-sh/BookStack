@@ -4,11 +4,13 @@ namespace BookStack\Http\Controllers\Auth;
 
 use BookStack\Auth\SocialAccount;
 use BookStack\Auth\User;
+use BookStack\Auth\Role;
 use BookStack\Auth\UserRepo;
 use BookStack\Exceptions\SocialSignInAccountNotUsed;
 use BookStack\Exceptions\SocialSignInException;
 use BookStack\Exceptions\UserRegistrationException;
 use BookStack\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
 use Exception;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -255,10 +257,6 @@ class RegisterController extends Controller
      */
     public function socialCallback($socialDriver, Request $request)
     {
-        if (!session()->has('social-callback')) {
-            throw new SocialSignInException(trans('errors.social_no_action_defined'), '/login');
-        }
-
         // Check request for error information
         if ($request->has('error') && $request->has('error_description')) {
             throw new SocialSignInException(trans('errors.social_login_bad_response', [
@@ -267,18 +265,40 @@ class RegisterController extends Controller
             ]), '/login');
         }
 
-        $action = session()->pull('social-callback');
+        $action = session()->pull('social-callback', 'login');
 
         // Attempt login or fall-back to register if allowed.
         $socialUser = $this->socialAuthService->getSocialUser($socialDriver);
         if ($action == 'login') {
+            $succeed = true;
             try {
                 return $this->socialAuthService->handleLoginCallback($socialDriver, $socialUser);
             } catch (SocialSignInAccountNotUsed $exception) {
                 if ($this->socialAuthService->driverAutoRegisterEnabled($socialDriver)) {
                     return $this->socialRegisterCallback($socialDriver, $socialUser);
                 }
+                $succeed = false;
                 throw $exception;
+            } finally {
+                if ($succeed && $this->socialAuthService->driverSyncGroupsEnabled($socialDriver)) {
+                    // Sync user groups
+                    if (array_key_exists('department', $socialUser->getRaw())) 
+                    {
+                        // sync groups and roles
+                        $currentUser = user();
+                        $departments = $socialUser->getRaw()['department'];
+                        // Get the ids for the roles from the names
+                        $departmentsAsRoles = $this->matchDepartmentsToSystemsRoles($departments);
+
+                        // Sync groups
+                        if ($this->socialAuthService->driverRemoveFromGroupsEnabled($socialDriver)) {
+                            $currentUser->roles()->sync($departmentsAsRoles);
+                            $this->userRepo->attachDefaultRole($currentUser);
+                        } else {
+                            $currentUser->roles()->syncWithoutDetaching($departmentsAsRoles);
+                        }
+                    }
+                }
             }
         }
 
@@ -287,6 +307,55 @@ class RegisterController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Match an array of group names from SOCIAL to BookStack system roles.
+     * Formats SOCIAL group names to be lower-case and hyphenated.
+     * @param array $groupNames
+     * @return \Illuminate\Support\Collection
+     */
+    protected function matchDepartmentsToSystemsRoles(array $groupNames)
+    {
+        foreach ($groupNames as $i => $groupName) {
+            $groupNames[$i] = str_replace(' ', '-', trim(strtolower($groupName)));
+        }
+
+        $roles = Role::query()->where(function (Builder $query) use ($groupNames) {
+            $query->whereIn('name', $groupNames);
+            foreach ($groupNames as $groupName) {
+                $query->orWhere('external_auth_id', 'LIKE', '%' . $groupName . '%');
+            }
+        })->get();
+
+        $matchedRoles = $roles->filter(function (Role $role) use ($groupNames) {
+            return $this->roleMatchesGroupNames($role, $groupNames);
+        });
+
+        return $matchedRoles->pluck('id');
+    }
+
+    /**
+     * Check a role against an array of group names to see if it matches.
+     * Checked against role 'external_auth_id' if set otherwise the name of the role.
+     * @param \BookStack\Auth\Role $role
+     * @param array $groupNames
+     * @return bool
+     */
+    protected function roleMatchesGroupNames(Role $role, array $groupNames)
+    {
+        if ($role->external_auth_id) {
+            $externalAuthIds = explode(',', strtolower($role->external_auth_id));
+            foreach ($externalAuthIds as $externalAuthId) {
+                if (in_array(trim($externalAuthId), $groupNames)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        $roleName = str_replace(' ', '-', trim(strtolower($role->display_name)));
+        return in_array($roleName, $groupNames);
     }
 
     /**
