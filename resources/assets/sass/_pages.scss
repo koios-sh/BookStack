@@ -20,6 +20,10 @@
   }
 }
 
+body.mce-fullscreen .page-editor .edit-area {
+  z-index: 12;
+}
+
 @include smaller-than($s) {
   .page-edit-toolbar {
     overflow-x: scroll;
@@ -258,7 +262,7 @@
     display: block;
     cursor: pointer;
     padding: $-s $-m;
-    font-size: 13.5px;
+    font-size: 16px;
     line-height: 1.6;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   }

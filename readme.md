@@ -3,6 +3,7 @@
 [![GitHub release](https://img.shields.io/github/release/BookStackApp/BookStack.svg)](https://github.com/BookStackApp/BookStack/releases/latest)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/BookStackApp/BookStack/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/BookStackApp/BookStack.svg)](https://travis-ci.org/BookStackApp/BookStack)
+[![Discord](https://img.shields.io/static/v1?label=Chat&message=Discord&color=738adb&logo=discord)](https://discord.gg/ztkBqR2)
 
 A platform for storing and organising information and documentation. General information and documentation for BookStack can be found at https://www.bookstackapp.com/.
 
@@ -75,7 +76,7 @@ npm run production
 npm run dev
 ```
 
-BookStack has many integration tests that use Laravel's built-in testing capabilities which makes use of PHPUnit. To use you will need PHPUnit 6 installed and accessible via command line, Directly running the composer-installed version will not work. There is a `mysql_testing` database defined within the app config which is what is used by PHPUnit. This database is set with the following database name, user name and password defined as `bookstack-test`. You will have to create that database and credentials before testing.
+BookStack has many integration tests that use Laravel's built-in testing capabilities which makes use of PHPUnit. There is a `mysql_testing` database defined within the app config which is what is used by PHPUnit. This database is set with the database name, user name and password all defined as `bookstack-test`. You will have to create that database and that set of credentials before testing.
 
 The testing database will also need migrating and seeding beforehand. This can be done with the following commands:
 
@@ -84,7 +85,7 @@ php artisan migrate --database=mysql_testing
 php artisan db:seed --class=DummyContentSeeder --database=mysql_testing
 ```
 
-Once done you can run `phpunit` in the application root directory to run all tests.
+Once done you can run `php vendor/bin/phpunit` in the application root directory to run all tests.
 
 ## Translations
 
