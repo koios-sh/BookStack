@@ -105,6 +105,9 @@ class ActivityService
      */
     public function entityActivity($entity, $count = 20, $page = 1)
     {
+        if (!hasAppAccess()) {
+            return [];
+        }
         if ($entity->isA('book')) {
             $query = $this->activity->where('book_id', '=', $entity->id);
         } else {
@@ -133,6 +136,9 @@ class ActivityService
      */
     public function userActivity($user, $count = 20, $page = 0)
     {
+        if (!hasAppAccess()) {
+            return [];
+        }
         $activityList = $this->permissionService
             ->filterRestrictedEntityRelations($this->activity, 'activities', 'entity_id', 'entity_type')
             ->orderBy('created_at', 'desc')->where('user_id', '=', $user->id)->skip($count * $page)->take($count)->get();

@@ -124,6 +124,18 @@ return [
         'auto_confirm' => env('TWITCH_AUTO_CONFIRM_EMAIL', false),
     ],
 
+    'wework'   => [
+        'client_id'     => env('WEWORK_APP_ID', false),
+        'client_secret' => env('WEWORK_APP_SECRET', false),
+        'redirect'      => env('APP_URL') . '/login/service/wework/callback',
+        'agent_id'       => env('WEWORK_AGENT_ID', false), 
+        'user_to_groups' => env('WEWORK_USER_TO_GROUPS', false),
+        'remove_from_groups' => env('WEWORK_REMOVE_FROM_GROUPS', false),
+        'name'          => '企业微信',
+        'auto_register' => env('WEWORK_AUTO_REGISTER', false),
+        'auto_confirm' => env('WEWORK_AUTO_CONFIRM_EMAIL', false),
+    ],
+
     'discord' => [
         'client_id' => env('DISCORD_APP_ID'),
         'client_secret' => env('DISCORD_APP_SECRET'),

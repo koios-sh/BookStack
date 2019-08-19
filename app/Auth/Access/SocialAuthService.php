@@ -15,7 +15,7 @@ class SocialAuthService
     protected $socialite;
     protected $socialAccount;
 
-    protected $validSocialDrivers = ['google', 'github', 'facebook', 'slack', 'twitter', 'azure', 'okta', 'gitlab', 'twitch', 'discord'];
+    protected $validSocialDrivers = ['google', 'github', 'facebook', 'slack', 'twitter', 'azure', 'okta', 'gitlab', 'twitch', 'discord', 'wework'];
 
     /**
      * SocialAuthService constructor.
@@ -86,7 +86,15 @@ class SocialAuthService
     public function getSocialUser(string $socialDriver)
     {
         $driver = $this->validateDriver($socialDriver);
-        return $this->socialite->driver($driver)->user();
+        return $this->socialite->driver($driver)->stateless()->user();
+    }
+
+    public function debug_to_console( $data ) {
+        $output = $data;
+        if ( is_array( $output ) )
+            $output = implode( ',', $output);
+
+        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
     }
 
     /**
@@ -99,6 +107,8 @@ class SocialAuthService
     public function handleLoginCallback($socialDriver, SocialUser $socialUser)
     {
         $socialId = $socialUser->getId();
+
+        $user = $this->userRepo->getByEmail($socialUser->getEmail());
 
         // Get any attached social accounts or users
         $socialAccount = $this->socialAccount->where('driver_id', '=', $socialId)->first();
@@ -114,7 +124,11 @@ class SocialAuthService
 
         // When a user is logged in but the social account does not exist,
         // Create the social account and attach it to the user & redirect to the profile page.
-        if ($isLoggedIn && $socialAccount === null) {
+        if (($isLoggedIn || $user !== null) && $socialAccount === null) {
+            if ($isLoggedIn === false) {
+                $currentUser = $user;
+                auth()->login($user);
+            }
             $this->fillSocialAccount($socialDriver, $socialUser);
             $currentUser->socialAccounts()->save($this->socialAccount);
             session()->flash('success', trans('settings.users_social_connected', ['socialAccount' => title_case($socialDriver)]));
@@ -138,7 +152,7 @@ class SocialAuthService
         if (setting('registration-enabled')) {
             $message .= trans('errors.social_account_register_instructions', ['socialAccount' => title_case($socialDriver)]);
         }
-        
+
         throw new SocialSignInAccountNotUsed($message, '/login');
     }
 
@@ -209,6 +223,16 @@ class SocialAuthService
     public function driverAutoRegisterEnabled(string $driver)
     {
         return config('services.' . strtolower($driver) . '.auto_register') === true;
+    }
+
+    public function driverSyncGroupsEnabled(string $driver)
+    {
+        return config('services.' . strtolower($driver) . '.user_to_groups') === true;
+    }
+
+    public function driverRemoveFromGroupsEnabled(string $driver) 
+    {
+        return config('services.' . strtolower($driver) . '.remove_from_groups') === true;
     }
 
     /**

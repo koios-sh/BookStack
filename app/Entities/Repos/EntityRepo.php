@@ -161,6 +161,12 @@ class EntityRepo
         if ($entity === null) {
             throw new NotFoundException(trans('errors.' . strtolower($type) . '_not_found'));
         }
+        if (!hasAppAccess()) {
+            $entity->createdBy = NULL;// ->name = "***";
+            $entity->updatedBy = NULL;// ->name = "***";
+            // $entity->updated_at = '2000-01-01 00:00:00';
+            $entity->created_at = '2016-07-08 00:00:00';
+        }
         return $entity;
     }
 
