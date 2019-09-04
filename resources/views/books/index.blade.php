@@ -4,22 +4,6 @@
     @include('books.list', ['books' => $books, 'view' => $view])
 @stop
 
-@section('toolbar')
-    <div class="col-xs-6">
-        <div class="action-buttons text-left">
-            @include('books/view-toggle', ['booksViewType' => $booksViewType])
-        </div>
-    </div>
-    <div class="col-xs-6 faded">
-        <div class="action-buttons">
-            @if($currentUser->can('book-create-all'))
-                <a href="{{ baseUrl("/create-book") }}" class="text-pos text-button">@icon('add'){{ trans('entities.books_create') }}</a>
-                <a href="{{ baseUrl("/import-book") }}" class="text-pos text-button">@icon('add'){{ trans('entities.books_import') }}</a>
-            @endif
-        </div>
-    </div>
-@stop
-
 @section('left')
     @if($recents)
         <div id="recents" class="mb-xl">
