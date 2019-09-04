@@ -28,19 +28,19 @@
                         <input book-sort-input type="hidden" name="sort-tree">
                         <div class="list text-right">
                             <a href="{{ $book->getUrl() }}" class="button outline">{{ trans('common.cancel') }}</a>
-                            <button class="button primary" type="submit">{{ trans('entities.books_sort_save') }}</button>
+                            <button class="button" type="submit">{{ trans('entities.books_sort_save') }}</button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <div>
-                <div class="card content-wrap">
+                <main class="card content-wrap">
                     <h2 class="list-heading mb-m">{{ trans('entities.books_sort_show_other') }}</h2>
 
                     @include('components.entity-selector', ['name' => 'books_list', 'selectorSize' => 'compact', 'entityTypes' => 'book', 'entityPermission' => 'update', 'showAdd' => true])
 
-                </div>
+                </main>
             </div>
         </div>
 

@@ -116,6 +116,7 @@ body.flexbox {
   min-height: 0;
   max-width: 100%;
   position: relative;
+  overflow-y: hidden;
 }
 
 .flex {
@@ -301,13 +302,17 @@ body.flexbox {
   .tri-layout-mobile-tabs {
     display: none;
   }
-  .tri-layout-left-contents > div, .tri-layout-right-contents > div {
+  .tri-layout-left-contents > *, .tri-layout-right-contents > * {
     opacity: 0.6;
     transition: opacity ease-in-out 120ms;
     &:hover {
       opacity: 1;
     }
+    &:focus-within {
+      opacity: 1;
+    }
   }
+
 }
 
 @include smaller-than($m) {

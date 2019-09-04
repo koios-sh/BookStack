@@ -9,7 +9,7 @@
     ])
 
     <div overlay v-cloak @click="hide">
-        <div class="popup-body" @click.stop="">
+        <div class="popup-body" tabindex="-1" @click.stop>
 
             <div class="popup-header primary-background">
                 <div class="popup-title">{{ trans('components.image_select') }}</div>
@@ -72,7 +72,7 @@
                                     <button type="button" class="button icon outline" @click="deleteImage">@icon('delete')</button>
 
                                 </div>
-                                <button class="button primary anim fadeIn float right" v-show="selectedImage" @click="callbackAndHide(selectedImage)">
+                                <button class="button anim fadeIn float right" v-show="selectedImage" @click="callbackAndHide(selectedImage)">
                                     {{ trans('components.image_select_image') }}
                                 </button>
                                 <div class="clearfix"></div>
